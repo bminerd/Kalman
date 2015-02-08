@@ -46,7 +46,7 @@ using namespace Eigen;
  * Classes
  *----------------------------------------------------------------------------*/
 
-template<int nStates, int nControlInputs>
+template<typename ValueType, int nStates, int nControlInputs>
 class KalmanFilter // TODO : public Filter
 {
 public:
@@ -74,9 +74,9 @@ public:
 	}
 
 	//--------------------------------------------------------------------------
-	void update(float measurements[nStates])
+	void update(ValueType measurements[nStates])
 	{
-		Matrix<float, nStates, 1> zMatrix;
+		Matrix<ValueType, nStates, 1> zMatrix;
 
 		for (int i = 0; i < nStates; i++)
 		{
@@ -84,17 +84,17 @@ public:
 		}
 
 		// Measurement
-		Matrix<float, nStates, 1> yMatrix = zMatrix - (myHMatrix * myXMatrix);
+		Matrix<ValueType, nStates, 1> yMatrix = zMatrix - (myHMatrix * myXMatrix);
 
 		// Residual covariance
-		Matrix<float, nStates, nStates> sMatrix =
+		Matrix<ValueType, nStates, nStates> sMatrix =
 		            (myHMatrix * myPMatrix * myHMatrix.transpose()) + myRMatrix;
 
 		// Compute Moore-Penrose pseudo inverse of S
-		float pinvTolerance = 0.000001f;
+		ValueType pinvTolerance = 0.000001f;
 
 		JacobiSVD<MatrixXf> sMatrixSvd(sMatrix, ComputeThinU | ComputeThinV);
-		Matrix<float, nStates, 1> inverseSvdValues;
+		Matrix<ValueType, nStates, 1> inverseSvdValues;
 
 		for (int i = 0; i < nStates; i++)
 		{
@@ -108,65 +108,65 @@ public:
 		    }
 		}
 
-		Matrix<float, nStates, nStates> sMatrixInverse =
+		Matrix<ValueType, nStates, nStates> sMatrixInverse =
 		    (sMatrixSvd.matrixV() * inverseSvdValues.asDiagonal() * sMatrixSvd.matrixU().transpose());
 
 		// Kalman gain
-		Matrix<float, nStates, nStates> kMatrix =
+		Matrix<ValueType, nStates, nStates> kMatrix =
 						  myPMatrix * myHMatrix.transpose() * sMatrixInverse;
 
 		// Updated state estimate
 		myXMatrix = myXMatrix + kMatrix * yMatrix;
 		// Updated estimate covariance
-		myPMatrix = (Matrix<float, nStates, nStates>::Identity() -
+		myPMatrix = (Matrix<ValueType, nStates, nStates>::Identity() -
 				     kMatrix * myHMatrix) 							*
 				    myPMatrix;
 	}
 
 	//--------------------------------------------------------------------------
-	Matrix<float, nStates, 1>& getXMatrix()
+	Matrix<ValueType, nStates, 1>& getXMatrix()
 	{
 		return myXMatrix;
 	}
 
 	//--------------------------------------------------------------------------
-	Matrix<float, nStates, nStates>& getFMatrix()
+	Matrix<ValueType, nStates, nStates>& getFMatrix()
 	{
 		return myFMatrix;
 	}
 
 	//--------------------------------------------------------------------------
-	Matrix<float, nControlInputs, 1>& getUMatrix()
+	Matrix<ValueType, nControlInputs, 1>& getUMatrix()
 	{
 		return myUMatrix;
 	}
 
 	//--------------------------------------------------------------------------
-	Matrix<float, nStates, nControlInputs>& getBMatrix()
+	Matrix<ValueType, nStates, nControlInputs>& getBMatrix()
 	{
 		return myBMatrix;
 	}
 
 	//--------------------------------------------------------------------------
-	Matrix<float, nStates, nStates>& getHMatrix()
+	Matrix<ValueType, nStates, nStates>& getHMatrix()
 	{
 		return myHMatrix;
 	}
 
 	//--------------------------------------------------------------------------
-	Matrix<float, nStates, nStates>& getPMatrix()
+	Matrix<ValueType, nStates, nStates>& getPMatrix()
 	{
 		return myPMatrix;
 	}
 
 	//--------------------------------------------------------------------------
-	Matrix<float, nStates, nStates>& getQMatrix()
+	Matrix<ValueType, nStates, nStates>& getQMatrix()
 	{
 		return myQMatrix;
 	}
 
 	//--------------------------------------------------------------------------
-	Matrix<float, nStates, nStates>& getRMatrix()
+	Matrix<ValueType, nStates, nStates>& getRMatrix()
 	{
 		return myRMatrix;
 	}
@@ -181,56 +181,56 @@ private:
 	 * @brief X or state vector. This vector contains the current values of the
 	 * filtered state variables.
 	 */
-	Matrix<float, nStates, 1> myXMatrix;
+	Matrix<ValueType, nStates, 1> myXMatrix;
 
 	/**
 	 * @brief F or state transition matrix (sometimes called the A matrix).
 	 * @details This matrix defines how the state variables relate to each
 	 * other.
 	 */
-	Matrix<float, nStates, nStates> myFMatrix;
+	Matrix<ValueType, nStates, nStates> myFMatrix;
 
 	/**
 	 * @brief U or control input vector.
 	 * @details This vector stores the control input values that will fused with
 	 * the state variables.
 	 */
-	Matrix<float, nControlInputs, 1> myUMatrix;
+	Matrix<ValueType, nControlInputs, 1> myUMatrix;
 
 	/**
 	 * @brief B or control matrix.
 	 * @details This matrix defines how the control inputs relate to the state
 	 * variables.
 	 */
-	Matrix<float, nStates, nControlInputs> myBMatrix;
+	Matrix<ValueType, nStates, nControlInputs> myBMatrix;
 
 	/**
 	 * @brief H or observation matrix.
 	 * @details This matrix defines what state variables are physically observed
 	 * or measured.
 	 */
-	Matrix<float, nStates, nStates> myHMatrix;
+	Matrix<ValueType, nStates, nStates> myHMatrix;
 
 	/**
 	 * @brief P or predicted covariance matrix.
 	 * @details This matrix contains the current covariance estimate for each
 	 * state variable.
 	 */
-	Matrix<float, nStates, nStates> myPMatrix;
+	Matrix<ValueType, nStates, nStates> myPMatrix;
 
 	/**
 	 * @brief Q or process error covariance.
 	 * @details This matrix defines the process error covariance estimates for
 	 * the state variables.
 	 */
-	Matrix<float, nStates, nStates> myQMatrix;
+	Matrix<ValueType, nStates, nStates> myQMatrix;
 
 	/**
 	 * @brief R or measurement error covariance.
 	 * @details This matrix defines the measurement error covariance estimates
 	 * for the state variables.
 	 */
-	Matrix<float, nStates, nStates> myRMatrix;
+	Matrix<ValueType, nStates, nStates> myRMatrix;
 };
 
 #endif // _KALMAN_FILTER_H_

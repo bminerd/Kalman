@@ -20,35 +20,52 @@ int main()
 {
     float dt = 0.02f;
 
-    KalmanFilter<12, 3> kalmanFilter;
+    KalmanFilter<float, 12, 3> kalmanFilter;
+    KalmanFilter<float, 6, 3> kalmanFilter6;
 
     kalmanFilter.getFMatrix() <<
-        1.0f, 0.0f, 0.0f,   dt, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,   dt, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   dt, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  -dt, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  -dt, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  -dt,
+        1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  -dt, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  -dt, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,  -dt,
+		0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   dt, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   dt, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,   dt, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f;
 
+    kalmanFilter6.getFMatrix() <<
+        1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f;
+
     kalmanFilter.getBMatrix() <<
-	    0.0f, 0.0f, 0.0f,
-	    0.0f, 0.0f, 0.0f,
-	    0.0f, 0.0f, 0.0f,
-	    0.0f, 0.0f, 0.0f,
-	    0.0f, 0.0f, 0.0f,
-	    0.0f, 0.0f, 0.0f,
 	      dt, 0.0f, 0.0f,
 	    0.0f,   dt, 0.0f,
 	    0.0f, 0.0f,   dt,
 	    0.0f, 0.0f, 0.0f,
 	    0.0f, 0.0f, 0.0f,
+	    0.0f, 0.0f, 0.0f,
+	    0.0f, 0.0f, 0.0f,
+	    0.0f, 0.0f, 0.0f,
+	    0.0f, 0.0f, 0.0f,
+	    0.0f, 0.0f, 0.0f,
+	    0.0f, 0.0f, 0.0f,
 	    0.0f, 0.0f, 0.0f;
+
+    kalmanFilter6.getBMatrix() <<
+          dt, 0.0f, 0.0f,
+        0.0f,   dt, 0.0f,
+        0.0f, 0.0f,   dt,
+        0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f;
 
     kalmanFilter.getHMatrix() <<
 	    1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -63,6 +80,14 @@ int main()
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f;
+
+    kalmanFilter6.getHMatrix() <<
+        1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f;
 
 	float p = 1.0f;
 
@@ -80,6 +105,14 @@ int main()
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,    p, 0.0f,
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,    p;
 
+	kalmanFilter6.getPMatrix() <<
+           p, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f,    p, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f,    p, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,    p, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f,    p, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,    p;
+
 	float q = 0.2f * dt;
 
 	kalmanFilter.getQMatrix() <<
@@ -95,6 +128,14 @@ int main()
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,    q, 0.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,    q, 0.0f,
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,    q;
+
+	kalmanFilter6.getQMatrix() <<
+           q, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f,    q, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f,    q, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,    q, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f,    q, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,    q;
 
 	float r = 0.6f;
 
@@ -112,6 +153,14 @@ int main()
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f;
 
+	kalmanFilter6.getRMatrix() <<
+           r, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f,    r, 0.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f,    r, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,    r, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f,    r, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 0.0f,    r;
+
 	float accelConversionFactor = 0.0039f;
 	float gyroConversionFactor  = 1.0f / 14.375f;
 
@@ -125,12 +174,13 @@ int main()
 	uint16_t dTime;
 
 	ifstream inputFile;
-	inputFile.open("imu_output_pitch_roll_3.csv");
+//	inputFile.open("imu_output_pitch_roll_3.csv");
+	inputFile.open("imu_output_3.csv");
 	string line;
 
 	int i = 0;
 
-	while (getline(inputFile, line))
+	while (getline(inputFile, line) && i < 1000)
 	{
 	    sscanf(line.data(),
 	           "%i,%i,%i,%i,%i,%i,%i,%i,%i,%i\n",
@@ -198,40 +248,40 @@ int main()
 	accelMeans[1] = accelSums[1] / (float) nSamplesToAverage;
 	accelMeans[2] = accelSums[2] / (float) nSamplesToAverage;
 
-	cout << "Accel Means: " << accelMeans[0] << ", " << accelMeans[1] << ", "
-	    << accelMeans[2] << endl;
-
     gyroMeans[0] = gyroSums[0] / (float) nSamplesToAverage;
     gyroMeans[1] = gyroSums[1] / (float) nSamplesToAverage;
     gyroMeans[2] = gyroSums[2] / (float) nSamplesToAverage;
 
-    gyroMeans[0] = magSums[0] / (float) nSamplesToAverage;
-    gyroMeans[1] = magSums[1] / (float) nSamplesToAverage;
-    gyroMeans[2] = magSums[2] / (float) nSamplesToAverage;
+    magMeans[0] = magSums[0] / (float) nSamplesToAverage;
+    magMeans[1] = magSums[1] / (float) nSamplesToAverage;
+    magMeans[2] = magSums[2] / (float) nSamplesToAverage;
 
     ofstream filteredStatesFile;
     filteredStatesFile.open("filtered_states.csv");
+
+    ofstream filteredStatesFile6;
+    filteredStatesFile6.open("filtered_states_6.csv");
 
     ofstream accelAnglesFile;
     accelAnglesFile.open("accel_angles.csv");
 
     float lastMeasurement[12] =
         {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+    float lastMeasurement6[6] =
+        {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
-	for (i = 0; i < nSamples; i++)
+    // TEST
+//    nSamples = 1;
+
+    for (i = 0; i < nSamples; i++)
 	{
-	    float accelX = accelData[i][0];
+        float accelX = accelData[i][0];
 	    float accelY = accelData[i][1];
 	    float accelZ = accelData[i][2];
-
-//	    cout << "Accel: " << accelX << ", " << accelY << ", " << accelZ << endl;
 
 	    float accelXMean = accelX - accelMeans[0];
 	    float accelYMean = accelY - accelMeans[1];
 	    float accelZMean = accelZ - accelMeans[2];
-
-//	    cout << "Accel, mean subtracted: " << accelX << ", " << accelY << ", "
-//	        << accelZ << endl;
 
 	    float gyroX = gyroData[i][0] - gyroMeans[0];
 	    float gyroY = gyroData[i][1] - gyroMeans[1];
@@ -263,26 +313,39 @@ int main()
 
 	    float measurement[12] =
 	    {
+	        aX,
+            aY,
+            aZ,
 	        pX,
 	        pY,
 	        pZ,
 	        vX,
 	        vY,
 	        vZ,
-	        aX,
-	        aY,
-	        aZ,
 	        0.0f,
 	        0.0f,
 	        0.0f
 	    };
 
+	    float measurement6[6] =
+        {
+            aX,
+            aY,
+            aZ,
+            pX,
+            pY,
+            pZ
+        };
+
 	    kalmanFilter.getUMatrix() << gyroX, gyroY, gyroZ;
+	    kalmanFilter6.getUMatrix() << gyroX, gyroY, gyroZ;
 
 	    // Predict
 	    kalmanFilter.predict();
+	    kalmanFilter6.predict();
 
 	    kalmanFilter.update(measurement);
+	    kalmanFilter6.update(measurement6);
 
 	    filteredStatesFile <<
 	        kalmanFilter.getXMatrix()(0, 0) << ", " <<
@@ -296,11 +359,24 @@ int main()
 	        kalmanFilter.getXMatrix()(8, 0) << ", " <<
 	        kalmanFilter.getXMatrix()(9, 0) << ", " <<
 	        kalmanFilter.getXMatrix()(10, 0) << ", " <<
-	        kalmanFilter.getXMatrix()(11, 0) << ", ";
+	        kalmanFilter.getXMatrix()(11, 0);
 	    filteredStatesFile << endl;
+
+	    filteredStatesFile6 <<
+            kalmanFilter6.getXMatrix()(0, 0) << ", " <<
+            kalmanFilter6.getXMatrix()(1, 0) << ", " <<
+            kalmanFilter6.getXMatrix()(2, 0) << ", " <<
+            kalmanFilter6.getXMatrix()(3, 0) << ", " <<
+            kalmanFilter6.getXMatrix()(4, 0) << ", " <<
+            kalmanFilter6.getXMatrix()(5, 0);
+	    filteredStatesFile6 << endl;
+
+	    memcpy(measurement, lastMeasurement, 12 * 4);
+	    memcpy(measurement6, lastMeasurement6, 6 * 4);
 	}
 
 	filteredStatesFile.close();
+	filteredStatesFile6.close();
 	accelAnglesFile.close();
 
 	return 0;
